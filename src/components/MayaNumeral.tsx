@@ -1,3 +1,5 @@
+import { ShellZero } from "./glyphs/ShellZero";
+
 type Props = {
   value: number;
   className?: string;
@@ -10,7 +12,7 @@ export function MayaNumeral({ value, className }: Props) {
   if (n === 0) {
     return (
       <div className={`maya-numeral ${className ?? ""}`} aria-label="0">
-        <span className="maya-zero" />
+        <ShellZero className="maya-shell" />
       </div>
     );
   }
