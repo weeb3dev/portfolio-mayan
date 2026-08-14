@@ -1,4 +1,4 @@
-# Alberto Jauregui — Mayan Codex Portfolio (v0)
+# Alberto Jauregui — Portfolio (v0)
 
 Hero-first creative-coding portfolio. Scroll drives a day→night cycle over a Mayan step pyramid; a Milky Way arm drifts through as night deepens.
 
