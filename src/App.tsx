@@ -20,7 +20,7 @@ export default function App() {
       <div className="noise" />
       <header className="topbar">
         <a className="brand-mark" href="#top">
-          AJ · Codex
+          AJ
         </a>
         <nav className="topbar-links">
           <a href="#story">Story</a>

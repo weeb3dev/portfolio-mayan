@@ -48,8 +48,9 @@ export function CodexSections() {
           <SectionKicker index={3} label="Tun — Contact" />
           <h2>Let’s talk</h2>
           <p>
-            Looking for Developer Relations and AI engineering roles. Happy to
-            talk startups, developer tools, and agents.
+            Looking for Technical GTM, Product Marketing, Developer Relations,
+            and AI Engineering roles. Happy to chat about tech startups, AI
+            developer tools, LLMs, agents, sustainability, and gardening.
           </p>
           <div className="contact-row">
             <a className="btn btn-primary" href="mailto:alberto@weeb3.dev">
@@ -83,8 +84,8 @@ export function CodexSections() {
         </section>
 
         <footer className="footer">
-          <span>Alberto Jauregui — Codex v0</span>
-          <span>Tampa Bay · Built with Three.js</span>
+          <span>Alberto Jauregui</span>
+          <span>Tampa Bay · Built with Cursor</span>
         </footer>
       </div>
     </div>
