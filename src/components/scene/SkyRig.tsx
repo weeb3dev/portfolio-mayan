@@ -14,21 +14,40 @@ export function SkyRig() {
     const night = THREE.MathUtils.smoothstep(progress, 0.1, 0.75);
     const dusk = THREE.MathUtils.smoothstep(progress, 0.2, 0.55);
 
+    // Equinox NW low-sun window for Kukulkán shadow
+    const equinox =
+      THREE.MathUtils.smoothstep(progress, 0.32, 0.42) *
+      (1 - THREE.MathUtils.smoothstep(progress, 0.52, 0.62));
+
     const angle = THREE.MathUtils.lerp(1.15, -0.45, night);
-    const sunX = Math.cos(angle) * 30;
-    const sunY = Math.sin(angle) * 24;
-    const sunZ = 10;
+    let sunX = Math.cos(angle) * 30;
+    let sunY = Math.sin(angle) * 24;
+    let sunZ = 10;
+
+    if (equinox > 0.01) {
+      // Swing toward northwest, low on the horizon
+      const nw = new THREE.Vector3(-22, 4.5, 18);
+      sunX = THREE.MathUtils.lerp(sunX, nw.x, equinox);
+      sunY = THREE.MathUtils.lerp(sunY, nw.y, equinox);
+      sunZ = THREE.MathUtils.lerp(sunZ, nw.z, equinox);
+    }
 
     if (sunLight.current) {
       sunLight.current.position.set(sunX, Math.max(sunY, 0.2), sunZ);
-      sunLight.current.intensity = THREE.MathUtils.lerp(2.6, 0.05, night);
-      sunLight.current.color.set(dusk < 0.6 ? "#fff2d8" : "#ff7a3c");
+      sunLight.current.intensity = THREE.MathUtils.lerp(
+        THREE.MathUtils.lerp(2.6, 0.05, night),
+        2.1,
+        equinox,
+      );
+      sunLight.current.color.set(
+        equinox > 0.3 ? "#ffb06a" : dusk < 0.6 ? "#fff2d8" : "#ff7a3c",
+      );
     }
 
     if (sunMesh.current) {
       sunMesh.current.position.set(sunX, sunY, sunZ);
       const mat = sunMesh.current.material as THREE.MeshBasicMaterial;
-      mat.opacity = THREE.MathUtils.clamp(1.1 - night * 1.35, 0, 1);
+      mat.opacity = THREE.MathUtils.clamp(1.1 - night * 1.35 + equinox * 0.25, 0, 1);
       sunMesh.current.scale.setScalar(THREE.MathUtils.lerp(1, 1.6, dusk));
     }
 
@@ -79,7 +98,6 @@ export function SkyRig() {
         <meshBasicMaterial color="#ffe2a8" transparent opacity={1} />
       </mesh>
 
-      {/* Soft horizon glow disc */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.2, -6]}>
         <ringGeometry args={[10, 38, 64]} />
         <meshBasicMaterial
