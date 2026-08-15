@@ -33,9 +33,11 @@ export default function App() {
       </header>
       <ProgressRail />
       <main className="site">
-        <Hero />
-        {/* Spacer so the sky/pyramid keep the stage while you scroll into night */}
-        <div style={{ height: "140vh" }} aria-hidden="true" />
+        <div id="scene-track">
+          <Hero />
+          {/* Scene track: day→dusk→night→cenote completes before Story */}
+          <div style={{ height: "150vh" }} aria-hidden="true" />
+        </div>
         <CodexSections />
       </main>
     </ScrollProvider>

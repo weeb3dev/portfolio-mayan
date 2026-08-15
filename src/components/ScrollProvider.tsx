@@ -3,6 +3,7 @@ import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { setScrollProgress } from "../hooks/useScrollProgress";
+import { setSceneProgress } from "../hooks/useSceneProgress";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,14 +15,22 @@ export function ScrollProvider({ children }: Props) {
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+    const updateFromWindow = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      setScrollProgress(max > 0 ? window.scrollY / max : 0);
+      const track = document.getElementById("scene-track");
+      if (track) {
+        const rect = track.getBoundingClientRect();
+        const total = track.offsetHeight - window.innerHeight;
+        const scrolled = -rect.top;
+        setSceneProgress(total > 0 ? Math.min(1, Math.max(0, scrolled / total)) : 0);
+      }
+    };
+
     if (reduced) {
-      const onScroll = () => {
-        const max = document.documentElement.scrollHeight - window.innerHeight;
-        setScrollProgress(max > 0 ? window.scrollY / max : 0);
-      };
-      onScroll();
-      window.addEventListener("scroll", onScroll, { passive: true });
-      return () => window.removeEventListener("scroll", onScroll);
+      updateFromWindow();
+      window.addEventListener("scroll", updateFromWindow, { passive: true });
+      return () => window.removeEventListener("scroll", updateFromWindow);
     }
 
     const lenis = new Lenis({
@@ -38,14 +47,20 @@ export function ScrollProvider({ children }: Props) {
     gsap.ticker.add(ticker);
     gsap.ticker.lagSmoothing(0);
 
-    const trigger = ScrollTrigger.create({
+    const pageTrigger = ScrollTrigger.create({
       trigger: document.documentElement,
       start: "top top",
       end: "bottom bottom",
       onUpdate: (self) => setScrollProgress(self.progress),
     });
 
-    // Hero fade / lift as you leave the first viewport
+    const sceneTrigger = ScrollTrigger.create({
+      trigger: "#scene-track",
+      start: "top top",
+      end: "bottom bottom",
+      onUpdate: (self) => setSceneProgress(self.progress),
+    });
+
     const heroTween = gsap.to(".hero-copy", {
       opacity: 0,
       y: -48,
@@ -97,7 +112,8 @@ export function ScrollProvider({ children }: Props) {
         t.scrollTrigger?.kill();
         t.kill();
       });
-      trigger.kill();
+      pageTrigger.kill();
+      sceneTrigger.kill();
       gsap.ticker.remove(ticker);
       lenis.destroy();
       ScrollTrigger.getAll().forEach((st) => st.kill());
