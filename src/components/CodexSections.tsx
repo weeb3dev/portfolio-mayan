@@ -1,7 +1,12 @@
 import { SectionKicker } from "./glyphs/SectionKicker";
 import { SteppedDivider } from "./glyphs/SteppedDivider";
 import { ProjectCard } from "./ProjectCard";
+import { ExperienceList } from "./ExperienceList";
+import { EducationList } from "./EducationList";
+import { MediaEmbeds } from "./MediaEmbeds";
 import { projects } from "../data/projects";
+import { experience } from "../data/experience";
+import { education } from "../data/education";
 
 export function CodexSections() {
   return (
@@ -11,18 +16,17 @@ export function CodexSections() {
           <SectionKicker index={1} label="Kin — Story" />
           <h2>How I got here</h2>
           <p>
-            GTM for a decade, then engineering. Both still show up in the work.
-            Pocket Network partnerships drove billions of API requests. In 2025 I
-            joined Gauntlet AI (~1000 hours) shipping agentic systems and
-            full-stack apps.
+            Go-To-Market roles for a decade, then software and AI engineering.
+            Instrumental in scaling Pocket Network from 0 to 1, driving billions
+            of API requests by expanding supported blockchains, onboarding
+            strategic partnerships, closing deals, and executing creative growth
+            strategies end-to-end. In the Spring of 2026, I graduated from
+            Gauntlet's AI Engineering Fellowship where I shipped LLM-integrated
+            applications and agents over 10 intensive weeks.
           </p>
           <p className="quote">
-            “I still think like GTM. I just write the code now too.”
-          </p>
-          <p>
-            Looking at Developer Relations and founding-engineer roles at
-            early-stage startups — architect the agent, write the landing copy,
-            demo it to developers.
+            “I still think like GTM. I can not only market and sell, but also
+            code and build with agents!”
           </p>
         </section>
 
@@ -44,8 +48,36 @@ export function CodexSections() {
 
         <SteppedDivider />
 
+        <section className="section" id="experience">
+          <SectionKicker index={3} label="Tun — Experience" />
+          <h2>Experience</h2>
+          <p>Growth and partnerships first. AI engineering next.</p>
+          <ExperienceList items={experience} />
+        </section>
+
+        <SteppedDivider />
+
+        <section className="section" id="education">
+          <SectionKicker index={4} label="Katun — Education" />
+          <h2>Education</h2>
+          <EducationList items={education} />
+        </section>
+
+        <SteppedDivider />
+
+        <section className="section" id="media">
+          <SectionKicker index={5} label="Baktun — Media" />
+          <h2>Building in public</h2>
+          <p>
+            DevRel content and Cursor community events in the Tampa Bay area.
+          </p>
+          <MediaEmbeds />
+        </section>
+
+        <SteppedDivider />
+
         <section className="section" id="contact">
-          <SectionKicker index={3} label="Tun — Contact" />
+          <SectionKicker index={6} label="Contact" />
           <h2>Let’s talk</h2>
           <p>
             Looking for Technical GTM, Product Marketing, Developer Relations,
@@ -79,6 +111,14 @@ export function CodexSections() {
               rel="noopener noreferrer"
             >
               YouTube
+            </a>
+            <a
+              className="btn btn-ghost"
+              href="https://x.com/weeb3dev"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              X
             </a>
           </div>
         </section>
