@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useScrollProgress } from "../../hooks/useScrollProgress";
 
-const COUNT = 1400;
+const COUNT = 2400;
 
 export function NightStars() {
   const ref = useRef<THREE.Points>(null);
@@ -12,7 +12,7 @@ export function NightStars() {
   const positions = useMemo(() => {
     const arr = new Float32Array(COUNT * 3);
     for (let i = 0; i < COUNT; i++) {
-      const r = 35 + Math.random() * 55;
+      const r = 28 + Math.random() * 60;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
       arr[i * 3] = r * Math.sin(phi) * Math.cos(theta);
@@ -24,8 +24,9 @@ export function NightStars() {
 
   useFrame(() => {
     if (!ref.current) return;
-    const night = THREE.MathUtils.smoothstep(progress, 0.32, 0.8);
-    (ref.current.material as THREE.PointsMaterial).opacity = night * 0.95;
+    // Come in earlier and hold bright through the rest of the page
+    const night = THREE.MathUtils.smoothstep(progress, 0.22, 0.55);
+    (ref.current.material as THREE.PointsMaterial).opacity = Math.min(1, night * 1.05);
   });
 
   return (
@@ -34,12 +35,13 @@ export function NightStars() {
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
       <pointsMaterial
-        size={0.09}
+        size={0.13}
         color="#f4efe4"
         transparent
         opacity={0}
         depthWrite={false}
         sizeAttenuation
+        fog={false}
       />
     </points>
   );
