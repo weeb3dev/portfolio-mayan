@@ -74,12 +74,53 @@ export const experience: ExperienceItem[] = [
     ],
   },
   {
-    dates: "2015 – 2016",
+    dates: "Oct 2016 – May 2018",
+    title: "Sustainability Tech Apprentice",
+    org: "Raincube",
+    bullets: [
+      "Researched and co-authored The Blue Paper: Raincube, Raincoin, and the Internet of Rain.",
+      "Organized and co-hosted lawn conversions, mulching parties, documentary nights, and Raincube installations.",
+      "Helped install smart rain catchment devices and permaculture gardens; presented at Florida A&M, tiny home expos, and the Florida Permaculture Convergence.",
+    ],
+  },
+  {
+    dates: "Aug 2015 – Nov 2018",
+    title: "Volunteer Director of Growth & Communications",
+    org: "Blockchain Education Network",
+    bullets: [
+      "Helped grow a Slack community of hundreds of students across 25+ university clubs in the US and Canada.",
+      "Rallied blockchain-curious people into hackathons and conferences, occasionally sponsoring travel and lodging.",
+      "Assisted the rebrand from College Cryptocurrency Network to Blockchain Education Network.",
+    ],
+  },
+  {
+    dates: "Oct 2015 – Dec 2016",
+    title: "Social Media & Field Marketing Manager",
+    org: "California Tacos To Go · Tampa",
+    bullets: [
+      "Pitched and created the part-time Social Media Manager role when it did not exist.",
+      "Tabled at USF's Bull Market on Wednesdays, collecting hundreds to thousands of emails and driving foot traffic with student coupons.",
+      "Built social channels and campaigns (Facebook events, Snapchat geofencing) and pushed food delivery app adoption.",
+    ],
+  },
+  {
+    dates: "Nov 2015 – Apr 2016",
     title: "Research Team Lead (Intern)",
     org: "SOCOM J36 AML Unit",
     bullets: [
-      "Presented The Future of Threat Finance at the Five Eyes Conference. Researched criminal orgs using digital currencies.",
-      "Selected for the DIA's ICCAE Summer Seminar.",
+      "Applied red cell analysis of US strategies to counter illegal money flows by testing existing policy and monitoring.",
+      "Presented The Future of Threat Finance at the Five Eyes Conference ahead of briefing SOCOM Counter-Threat Finance at MacDill AFB.",
+      "Hand-picked to represent USF's Program in National & Competitive Intelligence at the DIA's ICCAE Summer Seminar.",
+    ],
+  },
+  {
+    dates: "Nov 2014 – Aug 2015",
+    title: "Researcher (Intern)",
+    org: "SOCOM J36 AML Unit",
+    bullets: [
+      "Presented a brief to SOCOM leadership that influenced how they looked at digital assets.",
+      "Researched how transnational criminal organizations (converging with terror groups) leverage digital currencies and emerging tech.",
+      "Identified emerging trends, tactics, and techniques for laundering money through cryptocurrency.",
     ],
   },
 ];
