@@ -25,6 +25,9 @@ export default function App() {
         <nav className="topbar-links">
           <a href="#story">Story</a>
           <a href="#work">Work</a>
+          <a href="#experience">Experience</a>
+          <a href="#education">Education</a>
+          <a href="#media">Media</a>
           <a href="#contact">Contact</a>
         </nav>
       </header>
