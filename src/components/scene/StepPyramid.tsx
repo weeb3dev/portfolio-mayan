@@ -3,7 +3,6 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { scenePhases, useSceneProgress } from "../../hooks/useSceneProgress";
 import { SerpentShadow } from "./SerpentShadow";
-import { KukulkanHeads } from "./KukulkanHeads";
 
 const LEVELS = 9;
 
@@ -68,8 +67,6 @@ export function StepPyramid() {
     group.current.visible = cenote < 0.98;
   });
 
-  const baseZ = steps[0].size / 2;
-
   return (
     <group ref={group} position={[0, -1.35, 0]}>
       {steps.map(({ size, y, i }) => (
@@ -109,7 +106,6 @@ export function StepPyramid() {
       })}
 
       <SerpentShadow anchors={stairAnchors} />
-      <KukulkanHeads baseZ={baseZ} />
     </group>
   );
 }

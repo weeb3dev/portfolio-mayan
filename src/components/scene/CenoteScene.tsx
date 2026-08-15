@@ -4,34 +4,25 @@ import * as THREE from "three";
 import { scenePhases, useSceneProgress } from "../../hooks/useSceneProgress";
 import { NightStars } from "./NightStars";
 
-const OFFERING_COUNT = 48;
+const RIPPLE_COUNT = 4;
 
 /**
  * Inside the sacred cenote: limestone shaft, starry circular mouth,
- * fluorescent turquoise water — portal toward Xibalba / Chaac.
+ * fluorescent turquoise water with expanding ripples.
  */
 export function CenoteScene() {
   const group = useRef<THREE.Group>(null);
   const water = useRef<THREE.Mesh>(null);
   const waterLight = useRef<THREE.PointLight>(null);
-  const offerings = useRef<THREE.Points>(null);
+  const ripples = useRef<(THREE.Mesh | null)[]>([]);
   const sceneT = useSceneProgress();
 
-  const offeringPos = useMemo(() => {
-    const arr = new Float32Array(OFFERING_COUNT * 3);
-    for (let i = 0; i < OFFERING_COUNT; i++) {
-      const a = Math.random() * Math.PI * 2;
-      const r = Math.random() * 3.2;
-      arr[i * 3] = Math.cos(a) * r;
-      arr[i * 3 + 1] = -2 + Math.random() * 5;
-      arr[i * 3 + 2] = Math.sin(a) * r;
-    }
-    return arr;
-  }, []);
+  const rippleGeo = useMemo(() => new THREE.RingGeometry(0.35, 0.55, 48), []);
 
   useFrame((state) => {
     const { cenote } = scenePhases(sceneT);
     if (!group.current) return;
+    const t = state.clock.elapsedTime;
 
     group.current.visible = cenote > 0.02;
     group.current.traverse((obj) => {
@@ -44,8 +35,7 @@ export function CenoteScene() {
           ) {
             m.transparent = true;
             if (!m.userData.baseOpacity) m.userData.baseOpacity = m.opacity || 1;
-            // Water keeps its own animated opacity
-            if (!obj.userData.isWater) {
+            if (!obj.userData.isWater && !obj.userData.isRipple) {
               m.opacity = (m.userData.baseOpacity as number) * cenote;
             }
           }
@@ -55,26 +45,31 @@ export function CenoteScene() {
 
     if (water.current) {
       const mat = water.current.material as THREE.MeshStandardMaterial;
-      mat.opacity = 0.85 * cenote;
-      const pulse = 0.55 + Math.sin(state.clock.elapsedTime * 1.4) * 0.2;
+      mat.opacity = 0.88 * cenote;
+      const pulse = 0.5 + Math.sin(t * 1.3) * 0.18;
       mat.emissiveIntensity = pulse * cenote;
-      water.current.position.y = -3.8 + Math.sin(state.clock.elapsedTime * 0.7) * 0.06;
+      water.current.position.y = -3.8 + Math.sin(t * 0.65) * 0.05;
     }
 
     if (waterLight.current) {
       waterLight.current.intensity = 2.8 * cenote;
     }
 
-    if (offerings.current) {
-      offerings.current.rotation.y = state.clock.elapsedTime * 0.08;
-      const mat = offerings.current.material as THREE.PointsMaterial;
-      mat.opacity = 0.75 * cenote;
-    }
+    // Expanding concentric ripples on the water surface
+    ripples.current.forEach((mesh, i) => {
+      if (!mesh) return;
+      const mat = mesh.material as THREE.MeshBasicMaterial;
+      const phase = (t * 0.35 + i / RIPPLE_COUNT) % 1;
+      const scale = 0.4 + phase * 5.5;
+      mesh.scale.setScalar(scale);
+      mat.opacity = Math.max(0, (1 - phase) * 0.55 * cenote);
+      mesh.position.y = -3.78 + Math.sin(t * 0.65 + i) * 0.02;
+      mesh.visible = cenote > 0.05;
+    });
   });
 
   return (
     <group ref={group} visible={false} position={[0, 0, 0]}>
-      {/* Shaft walls */}
       <mesh position={[0, -1, 0]}>
         <cylinderGeometry args={[7.2, 6.4, 14, 48, 1, true]} />
         <meshStandardMaterial
@@ -84,7 +79,6 @@ export function CenoteScene() {
           metalness={0.05}
         />
       </mesh>
-      {/* Inner cooler limestone band */}
       <mesh position={[0, -1, 0]}>
         <cylinderGeometry args={[7.05, 6.25, 13.6, 48, 1, true]} />
         <meshStandardMaterial
@@ -96,13 +90,11 @@ export function CenoteScene() {
         />
       </mesh>
 
-      {/* Rim lip */}
       <mesh position={[0, 5.9, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[6.6, 9.5, 48]} />
         <meshStandardMaterial color="#6a6054" roughness={0.92} side={THREE.DoubleSide} />
       </mesh>
 
-      {/* Fluorescent water */}
       <mesh
         ref={water}
         position={[0, -3.8, 0]}
@@ -121,6 +113,29 @@ export function CenoteScene() {
         />
       </mesh>
 
+      {Array.from({ length: RIPPLE_COUNT }, (_, i) => (
+        <mesh
+          key={i}
+          ref={(m) => {
+            ripples.current[i] = m;
+          }}
+          geometry={rippleGeo}
+          position={[0, -3.78, 0]}
+          rotation={[-Math.PI / 2, 0, 0]}
+          userData={{ isRipple: true }}
+          visible={false}
+        >
+          <meshBasicMaterial
+            color="#b8fff0"
+            transparent
+            opacity={0}
+            depthWrite={false}
+            side={THREE.DoubleSide}
+            blending={THREE.AdditiveBlending}
+          />
+        </mesh>
+      ))}
+
       <pointLight
         ref={waterLight}
         position={[0, -2.8, 0]}
@@ -130,28 +145,11 @@ export function CenoteScene() {
         decay={2}
       />
 
-      {/* Soft fill from below */}
       <hemisphereLight args={["#0a3040", "#1af0c8", 0.35]} />
 
-      {/* Stars framed in the circular mouth */}
       <group position={[0, 8, 0]}>
         <NightStars cenoteBoost />
       </group>
-
-      {/* Jade / gold offering motes */}
-      <points ref={offerings}>
-        <bufferGeometry>
-          <bufferAttribute attach="attributes-position" args={[offeringPos, 3]} />
-        </bufferGeometry>
-        <pointsMaterial
-          size={0.08}
-          color="#7dffa8"
-          transparent
-          opacity={0}
-          depthWrite={false}
-          blending={THREE.AdditiveBlending}
-        />
-      </points>
     </group>
   );
 }

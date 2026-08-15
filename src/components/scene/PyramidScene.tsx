@@ -6,7 +6,6 @@ import { StepPyramid } from "./StepPyramid";
 import { SkyRig } from "./SkyRig";
 import { MilkyWay } from "./MilkyWay";
 import { NightStars } from "./NightStars";
-import { Quetzal } from "./Quetzal";
 import { CenoteScene } from "./CenoteScene";
 
 function CameraRig() {
@@ -82,7 +81,6 @@ export function PyramidScene() {
           <SkyRig />
           <NightStars />
           <MilkyWay />
-          <Quetzal />
           <StepPyramid />
           <Ground />
           <CenoteScene />
