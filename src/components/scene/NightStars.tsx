@@ -1,18 +1,18 @@
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { scenePhases, useSceneProgress } from "../../hooks/useSceneProgress";
+import { useScrollProgress } from "../../hooks/useScrollProgress";
 
-const COUNT = 1800;
+const COUNT = 2400;
 
 export function NightStars() {
   const ref = useRef<THREE.Points>(null);
-  const sceneT = useSceneProgress();
+  const progress = useScrollProgress();
 
   const positions = useMemo(() => {
     const arr = new Float32Array(COUNT * 3);
     for (let i = 0; i < COUNT; i++) {
-      const r = 28 + Math.random() * 50;
+      const r = 28 + Math.random() * 60;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
       arr[i * 3] = r * Math.sin(phi) * Math.cos(theta);
@@ -24,11 +24,9 @@ export function NightStars() {
 
   useFrame(() => {
     if (!ref.current) return;
-    const { cenote } = scenePhases(sceneT);
-    const nightAmt = THREE.MathUtils.smoothstep(sceneT, 0.4, 0.55);
-    // Stay bright into cenote so the mouth frames the sky
-    const opacity = Math.max(nightAmt * 0.95, cenote * 0.9);
-    (ref.current.material as THREE.PointsMaterial).opacity = opacity;
+    // Come in earlier and hold bright through the rest of the page
+    const night = THREE.MathUtils.smoothstep(progress, 0.22, 0.55);
+    (ref.current.material as THREE.PointsMaterial).opacity = Math.min(1, night * 1.05);
   });
 
   return (
@@ -37,7 +35,7 @@ export function NightStars() {
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
       <pointsMaterial
-        size={0.12}
+        size={0.13}
         color="#f4efe4"
         transparent
         opacity={0}

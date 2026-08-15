@@ -1,40 +1,24 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Suspense, useRef } from "react";
 import * as THREE from "three";
-import { scenePhases, useSceneProgress } from "../../hooks/useSceneProgress";
+import { useScrollProgress } from "../../hooks/useScrollProgress";
 import { StepPyramid } from "./StepPyramid";
 import { SkyRig } from "./SkyRig";
 import { MilkyWay } from "./MilkyWay";
 import { NightStars } from "./NightStars";
-import { CenoteScene } from "./CenoteScene";
 
 function CameraRig() {
-  const sceneT = useSceneProgress();
+  const progress = useScrollProgress();
 
   useFrame((state) => {
-    const { cenote } = scenePhases(sceneT);
-    const plaza = 1 - cenote;
-
-    const plazaPos = new THREE.Vector3(
-      THREE.MathUtils.lerp(0.6, -1.2, Math.min(sceneT, 0.58) / 0.58),
-      THREE.MathUtils.lerp(3.8, 5.2, Math.min(sceneT, 0.58) / 0.58),
-      THREE.MathUtils.lerp(14.5, 11.8, Math.min(sceneT, 0.58) / 0.58),
+    const t = progress;
+    const target = new THREE.Vector3(
+      THREE.MathUtils.lerp(0.6, -1.2, t),
+      THREE.MathUtils.lerp(3.8, 5.6, t),
+      THREE.MathUtils.lerp(14.5, 11.5, t),
     );
-    const plazaLook = new THREE.Vector3(0, 2.2 + Math.min(sceneT, 0.58) * 0.6, 0);
-
-    // Low over the pool, tilted up so water fills the lower frame and the mouth the upper
-    const cenotePos = new THREE.Vector3(0.15, -2.95, 2.8);
-    const cenoteLook = new THREE.Vector3(0, 3.6, -0.6);
-
-    const target = plazaPos.lerp(cenotePos, cenote);
-    const look = plazaLook.lerp(cenoteLook, cenote);
-
-    state.camera.position.lerp(target, 0.07);
-    state.camera.lookAt(look);
-    const cam = state.camera as THREE.PerspectiveCamera;
-    cam.fov = THREE.MathUtils.lerp(42, 58, cenote);
-    cam.updateProjectionMatrix();
-    void plaza;
+    state.camera.position.lerp(target, 0.06);
+    state.camera.lookAt(0, 2.2 + t * 0.8, 0);
   });
 
   return null;
@@ -42,24 +26,18 @@ function CameraRig() {
 
 function Ground() {
   const ref = useRef<THREE.Mesh>(null);
-  const sceneT = useSceneProgress();
+  const progress = useScrollProgress();
 
   useFrame(() => {
     if (!ref.current) return;
-    const { cenote } = scenePhases(sceneT);
-    const night = THREE.MathUtils.smoothstep(sceneT, 0.28, 0.55);
+    const night = THREE.MathUtils.smoothstep(progress, 0.15, 0.7);
     const mat = ref.current.material as THREE.MeshStandardMaterial;
     const day = new THREE.Color("#6a7a48");
     const dusk = new THREE.Color("#3d3428");
     const nightCol = new THREE.Color("#0e0f16");
     mat.color.copy(
-      night < 0.5
-        ? day.clone().lerp(dusk, night * 2)
-        : dusk.clone().lerp(nightCol, (night - 0.5) * 2),
+      night < 0.5 ? day.clone().lerp(dusk, night * 2) : dusk.clone().lerp(nightCol, (night - 0.5) * 2),
     );
-    mat.transparent = true;
-    mat.opacity = 1 - cenote;
-    ref.current.visible = cenote < 0.98;
   });
 
   return (
@@ -74,7 +52,7 @@ export function PyramidScene() {
   return (
     <div className="canvas-root" aria-hidden="true">
       <Canvas
-        dpr={[1, 1.6]}
+        dpr={[1, 1.75]}
         gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
         camera={{ position: [0.6, 3.8, 14.5], fov: 42, near: 0.1, far: 200 }}
         shadows
@@ -86,7 +64,6 @@ export function PyramidScene() {
           <MilkyWay />
           <StepPyramid />
           <Ground />
-          <CenoteScene />
         </Suspense>
       </Canvas>
     </div>

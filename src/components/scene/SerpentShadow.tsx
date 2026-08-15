@@ -1,7 +1,7 @@
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { scenePhases, useSceneProgress } from "../../hooks/useSceneProgress";
+import { useScrollProgress } from "../../hooks/useScrollProgress";
 
 const TRI_COUNT = 7;
 
@@ -11,16 +11,17 @@ type Props = {
 
 /**
  * Stylized Kukulkán equinox shadow: seven light triangles
- * descending the north balustrade during the dusk scene window.
+ * descending the north balustrade during the dusk scroll window.
  */
 export function SerpentShadow({ anchors }: Props) {
   const group = useRef<THREE.Group>(null);
   const litMats = useRef<THREE.MeshBasicMaterial[]>([]);
   const shadeMats = useRef<THREE.MeshBasicMaterial[]>([]);
-  const sceneT = useSceneProgress();
+  const progress = useScrollProgress();
 
   const litGeo = useMemo(() => {
     const shape = new THREE.Shape();
+    // Right-triangle pointing down the stair
     shape.moveTo(0, 0);
     shape.lineTo(1.15, 0);
     shape.lineTo(0, 0.95);
@@ -47,22 +48,19 @@ export function SerpentShadow({ anchors }: Props) {
   }, [anchors]);
 
   useFrame(() => {
-    const { cenote } = scenePhases(sceneT);
-    const reveal = THREE.MathUtils.smoothstep(sceneT, 0.28, 0.46);
-    const fade = 1 - THREE.MathUtils.smoothstep(sceneT, 0.52, 0.62);
-    const strength = reveal * fade * (1 - cenote);
+    const reveal = THREE.MathUtils.smoothstep(progress, 0.3, 0.5);
+    const nightFade = 1 - THREE.MathUtils.smoothstep(progress, 0.56, 0.74);
+    const strength = reveal * nightFade;
 
     litMats.current.forEach((mat, i) => {
       if (!mat) return;
-      const triIndex = i % TRI_COUNT;
-      const local = THREE.MathUtils.clamp(reveal * (TRI_COUNT + 0.8) - triIndex, 0, 1);
+      const local = THREE.MathUtils.clamp(reveal * (TRI_COUNT + 0.8) - i, 0, 1);
       mat.opacity = strength * local * 0.95;
     });
 
     shadeMats.current.forEach((mat, i) => {
       if (!mat) return;
-      const triIndex = i % TRI_COUNT;
-      const local = THREE.MathUtils.clamp(reveal * (TRI_COUNT + 0.8) - triIndex, 0, 1);
+      const local = THREE.MathUtils.clamp(reveal * (TRI_COUNT + 0.8) - i, 0, 1);
       mat.opacity = strength * local * 0.7;
     });
 
@@ -74,70 +72,42 @@ export function SerpentShadow({ anchors }: Props) {
   return (
     <group ref={group} visible={false}>
       {tris.map((a, i) => (
-        <group key={`L-${i}`}>
-          <group position={[-1.12, a.y + 0.05, a.z + 0.05]}>
-            <mesh geometry={litGeo} rotation={[0.05, Math.PI / 2, -0.08]} renderOrder={3}>
-              <meshBasicMaterial
-                ref={(m) => {
-                  if (m) litMats.current[i] = m;
-                }}
-                color="#f3d7a4"
-                transparent
-                opacity={0}
-                depthWrite={false}
-                side={THREE.DoubleSide}
-              />
-            </mesh>
-            <mesh
-              geometry={shadeGeo}
-              position={[0, 0, 0.02]}
-              rotation={[0.05, Math.PI / 2, -0.08]}
-              renderOrder={2}
-            >
-              <meshBasicMaterial
-                ref={(m) => {
-                  if (m) shadeMats.current[i] = m;
-                }}
-                color="#1a120e"
-                transparent
-                opacity={0}
-                depthWrite={false}
-                side={THREE.DoubleSide}
-              />
-            </mesh>
-          </group>
-          {/* Mirror on right balustrade */}
-          <group position={[1.12, a.y + 0.05, a.z + 0.05]} scale={[-1, 1, 1]}>
-            <mesh geometry={litGeo} rotation={[0.05, Math.PI / 2, -0.08]} renderOrder={3}>
-              <meshBasicMaterial
-                color="#f3d7a4"
-                transparent
-                opacity={0}
-                depthWrite={false}
-                side={THREE.DoubleSide}
-                ref={(m) => {
-                  if (m) litMats.current[i + TRI_COUNT] = m;
-                }}
-              />
-            </mesh>
-            <mesh
-              geometry={shadeGeo}
-              position={[0, 0, 0.02]}
-              rotation={[0.05, Math.PI / 2, -0.08]}
-              renderOrder={2}
-            >
-              <meshBasicMaterial
-                color="#1a120e"
-                transparent
-                opacity={0}
-                depthWrite={false}
-                side={THREE.DoubleSide}
-                ref={(m) => {
-                  if (m) shadeMats.current[i + TRI_COUNT] = m;
-                }}
-              />
-            </mesh>
-          </group>
+        <group key={i} position={[-1.12, a.y + 0.05, a.z + 0.05]}>
+          {/* Lit triangle (serpent body segment) */}
+          <mesh
+            geometry={litGeo}
+            rotation={[0.05, Math.PI / 2, -0.08]}
+            renderOrder={3}
+          >
+            <meshBasicMaterial
+              ref={(m) => {
+                if (m) litMats.current[i] = m;
+              }}
+              color="#f3d7a4"
+              transparent
+              opacity={0}
+              depthWrite={false}
+              side={THREE.DoubleSide}
+            />
+          </mesh>
+          {/* Dark complementary triangle */}
+          <mesh
+            geometry={shadeGeo}
+            position={[0, 0, 0.02]}
+            rotation={[0.05, Math.PI / 2, -0.08]}
+            renderOrder={2}
+          >
+            <meshBasicMaterial
+              ref={(m) => {
+                if (m) shadeMats.current[i] = m;
+              }}
+              color="#1a120e"
+              transparent
+              opacity={0}
+              depthWrite={false}
+              side={THREE.DoubleSide}
+            />
+          </mesh>
         </group>
       ))}
     </group>
