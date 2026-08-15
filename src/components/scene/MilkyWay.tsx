@@ -53,13 +53,14 @@ export function MilkyWay() {
         <bufferAttribute attach="attributes-color" args={[colors, 3]} />
       </bufferGeometry>
       <pointsMaterial
-        size={0.12}
+        size={0.13}
         vertexColors
         transparent
         opacity={0}
         depthWrite={false}
         blending={THREE.AdditiveBlending}
         sizeAttenuation
+        fog={false}
       />
     </points>
   );

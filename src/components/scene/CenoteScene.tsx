@@ -4,38 +4,37 @@ import * as THREE from "three";
 import { scenePhases, useSceneProgress } from "../../hooks/useSceneProgress";
 
 const RIPPLE_COUNT = 5;
-const MOUTH_STARS = 2200;
-const MOUTH_MILKY = 1400;
+const MOUTH_STARS = 2800;
+const MOUTH_MILKY = 1600;
 
 /**
  * Sacred cenote: limestone shaft, circular mouth packed with night sky,
  * deep turquoise water with soft expanding ripples.
- * Vibe: inside looking up through the cave opening.
+ * Composition: inside looking up through the cave opening.
  */
 export function CenoteScene() {
   const group = useRef<THREE.Group>(null);
   const water = useRef<THREE.Mesh>(null);
   const waterDeep = useRef<THREE.Mesh>(null);
   const waterLight = useRef<THREE.PointLight>(null);
-  const mouthGlow = useRef<THREE.Mesh>(null);
+  const mouthSky = useRef<THREE.Mesh>(null);
   const ripples = useRef<(THREE.Mesh | null)[]>([]);
   const mouthStars = useRef<THREE.Points>(null);
   const milky = useRef<THREE.Points>(null);
   const sceneT = useSceneProgress();
 
-  const rippleGeo = useMemo(() => new THREE.RingGeometry(0.3, 0.48, 56), []);
+  const rippleGeo = useMemo(() => new THREE.RingGeometry(0.28, 0.45, 56), []);
 
   const stalactites = useMemo(() => {
-    const items: { x: number; z: number; h: number; r: number; y: number }[] = [];
-    for (let i = 0; i < 18; i++) {
-      const a = (i / 18) * Math.PI * 2 + (i % 3) * 0.12;
-      const rad = 5.4 + (i % 4) * 0.35;
+    const items: { x: number; z: number; h: number; r: number }[] = [];
+    for (let i = 0; i < 22; i++) {
+      const a = (i / 22) * Math.PI * 2 + (i % 3) * 0.1;
+      const rad = 5.15 + (i % 5) * 0.28;
       items.push({
         x: Math.cos(a) * rad,
         z: Math.sin(a) * rad,
-        h: 0.7 + (i % 5) * 0.35,
-        r: 0.08 + (i % 3) * 0.04,
-        y: 5.55,
+        h: 0.85 + (i % 5) * 0.4,
+        r: 0.09 + (i % 3) * 0.045,
       });
     }
     return items;
@@ -46,18 +45,18 @@ export function CenoteScene() {
     const colors = new Float32Array(MOUTH_STARS * 3);
     const col = new THREE.Color();
     for (let i = 0; i < MOUTH_STARS; i++) {
-      // Dense disc filling the circular mouth, slight dome
       const u = Math.random();
-      const r = Math.sqrt(u) * 5.8;
+      const r = Math.sqrt(u) * 5.5;
       const theta = Math.random() * Math.PI * 2;
-      const lift = Math.sqrt(Math.max(0, 1 - (r / 5.8) ** 2)) * 2.2;
+      const lift = Math.sqrt(Math.max(0, 1 - (r / 5.5) ** 2)) * 3.2;
       positions[i * 3] = Math.cos(theta) * r;
       positions[i * 3 + 1] = lift;
       positions[i * 3 + 2] = Math.sin(theta) * r;
 
-      const cool = Math.random();
-      col.setHSL(0.55 + cool * 0.12, 0.15, 0.75 + Math.random() * 0.25);
-      if (Math.random() > 0.82) col.setHSL(0.08, 0.45, 0.85);
+      const roll = Math.random();
+      if (roll > 0.88) col.setHSL(0.08, 0.55, 0.9);
+      else if (roll > 0.7) col.setHSL(0.62, 0.35, 0.88);
+      else col.setHSL(0.55, 0.08, 0.82 + Math.random() * 0.18);
       colors[i * 3] = col.r;
       colors[i * 3 + 1] = col.g;
       colors[i * 3 + 2] = col.b;
@@ -70,14 +69,13 @@ export function CenoteScene() {
     const colors = new Float32Array(MOUTH_MILKY * 3);
     const col = new THREE.Color();
     for (let i = 0; i < MOUTH_MILKY; i++) {
-      const along = (Math.random() - 0.5) * 11;
-      const across = (Math.random() - 0.5) * (1.2 + Math.random() * 2.4);
-      const band = Math.sin(along * 0.35) * 0.6;
-      positions[i * 3] = along * 0.55 + across * 0.35;
-      positions[i * 3 + 1] = 0.4 + Math.abs(across) * 0.15 + Math.random() * 0.8;
-      positions[i * 3 + 2] = band + across * 0.75 - along * 0.08;
+      const along = (Math.random() - 0.5) * 10.5;
+      const across = (Math.random() - 0.5) * (1.4 + Math.random() * 2.8);
+      positions[i * 3] = along * 0.5 + across * 0.3;
+      positions[i * 3 + 1] = 0.8 + Math.abs(across) * 0.2 + Math.random() * 1.4;
+      positions[i * 3 + 2] = Math.sin(along * 0.32) * 0.7 + across * 0.7;
 
-      col.setHSL(0.58 + Math.random() * 0.08, 0.35, 0.55 + Math.random() * 0.35);
+      col.setHSL(0.6 + Math.random() * 0.1, 0.45, 0.55 + Math.random() * 0.4);
       colors[i * 3] = col.r;
       colors[i * 3 + 1] = col.g;
       colors[i * 3 + 2] = col.b;
@@ -91,172 +89,171 @@ export function CenoteScene() {
     const t = state.clock.elapsedTime;
 
     group.current.visible = cenote > 0.02;
-    group.current.traverse((obj) => {
-      if (obj instanceof THREE.Mesh) {
-        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
-        mats.forEach((m) => {
-          if (
-            m instanceof THREE.MeshStandardMaterial ||
-            m instanceof THREE.MeshBasicMaterial
-          ) {
-            m.transparent = true;
-            if (!m.userData.baseOpacity) m.userData.baseOpacity = m.opacity || 1;
-            if (
-              !obj.userData.isWater &&
-              !obj.userData.isRipple &&
-              !obj.userData.isMouthSky
-            ) {
-              m.opacity = (m.userData.baseOpacity as number) * cenote;
-            }
-          }
-        });
-      }
-    });
 
     if (water.current) {
       const mat = water.current.material as THREE.MeshStandardMaterial;
-      mat.opacity = 0.78 * cenote;
-      mat.emissiveIntensity = (0.28 + Math.sin(t * 0.9) * 0.06) * cenote;
-      water.current.position.y = -4.15 + Math.sin(t * 0.55) * 0.04;
+      mat.opacity = 0.82 * cenote;
+      mat.emissiveIntensity = (0.4 + Math.sin(t * 0.9) * 0.08) * cenote;
+      water.current.position.y = -3.55 + Math.sin(t * 0.55) * 0.035;
     }
 
     if (waterDeep.current) {
       const mat = waterDeep.current.material as THREE.MeshStandardMaterial;
-      mat.opacity = 0.92 * cenote;
-      waterDeep.current.position.y = -4.55 + Math.sin(t * 0.55) * 0.02;
+      mat.opacity = 0.95 * cenote;
+      waterDeep.current.position.y = -3.95;
     }
 
     if (waterLight.current) {
-      waterLight.current.intensity = (1.6 + Math.sin(t * 1.1) * 0.25) * cenote;
+      waterLight.current.intensity = (2.4 + Math.sin(t * 1.1) * 0.3) * cenote;
     }
 
-    if (mouthGlow.current) {
-      const mat = mouthGlow.current.material as THREE.MeshBasicMaterial;
-      mat.opacity = 0.22 * cenote;
+    if (mouthSky.current) {
+      const mat = mouthSky.current.material as THREE.MeshBasicMaterial;
+      mat.opacity = 0.95 * cenote;
     }
 
     if (mouthStars.current) {
-      (mouthStars.current.material as THREE.PointsMaterial).opacity = 0.95 * cenote;
-      mouthStars.current.rotation.y = t * 0.008;
+      (mouthStars.current.material as THREE.PointsMaterial).opacity = cenote;
+      mouthStars.current.rotation.y = t * 0.01;
     }
 
     if (milky.current) {
-      (milky.current.material as THREE.PointsMaterial).opacity = 0.85 * cenote;
-      milky.current.rotation.z = Math.sin(t * 0.04) * 0.05;
+      (milky.current.material as THREE.PointsMaterial).opacity = 0.95 * cenote;
+      milky.current.rotation.z = 0.55 + Math.sin(t * 0.04) * 0.04;
     }
 
     ripples.current.forEach((mesh, i) => {
       if (!mesh) return;
       const mat = mesh.material as THREE.MeshBasicMaterial;
       const phase = (t * 0.28 + i / RIPPLE_COUNT) % 1;
-      const scale = 0.35 + phase * 6.2;
-      mesh.scale.setScalar(scale);
-      mat.opacity = Math.max(0, (1 - phase) * 0.42 * cenote);
-      mesh.position.y = -4.12 + Math.sin(t * 0.55 + i) * 0.015;
+      mesh.scale.setScalar(0.4 + phase * 5.8);
+      mat.opacity = Math.max(0, (1 - phase) * 0.5 * cenote);
+      mesh.position.y = -3.52 + Math.sin(t * 0.55 + i) * 0.012;
       mesh.visible = cenote > 0.05;
+    });
+
+    // Fade limestone / props via group-level trick: scale lights + material opacity on tagged meshes
+    group.current.traverse((obj) => {
+      if (!(obj instanceof THREE.Mesh)) return;
+      if (obj.userData.fadeWithCenote) {
+        const m = obj.material as THREE.MeshBasicMaterial | THREE.MeshStandardMaterial;
+        if (!m.userData.baseOpacity) m.userData.baseOpacity = m.opacity ?? 1;
+        m.transparent = true;
+        m.opacity = (m.userData.baseOpacity as number) * cenote;
+      }
     });
   });
 
   return (
     <group ref={group} visible={false}>
-      {/* Outer limestone shaft */}
-      <mesh position={[0, -0.4, 0]}>
-        <cylinderGeometry args={[7.6, 6.8, 16, 64, 1, true]} />
-        <meshStandardMaterial
-          color="#4a433a"
-          side={THREE.BackSide}
-          roughness={0.97}
-          metalness={0.02}
-        />
+      {/* Shaft walls — unlit so they read against night fog */}
+      <mesh position={[0, 0.2, 0]} userData={{ fadeWithCenote: true }}>
+        <cylinderGeometry args={[7.4, 6.6, 14, 64, 1, true]} />
+        <meshBasicMaterial color="#6d6356" side={THREE.BackSide} />
       </mesh>
-      {/* Inner damp stone tint */}
-      <mesh position={[0, -0.6, 0]}>
-        <cylinderGeometry args={[7.35, 6.55, 15.2, 64, 1, true]} />
-        <meshStandardMaterial
-          color="#2a383c"
+      <mesh position={[0, 0.1, 0]} userData={{ fadeWithCenote: true }}>
+        <cylinderGeometry args={[7.15, 6.35, 13.4, 64, 1, true]} />
+        <meshBasicMaterial
+          color="#3a4a4c"
           side={THREE.BackSide}
-          roughness={0.92}
           transparent
-          opacity={0.45}
+          opacity={0.55}
         />
       </mesh>
 
-      {/* Ceiling slab with circular mouth */}
-      <mesh position={[0, 6.05, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[5.9, 11.5, 64]} />
-        <meshStandardMaterial color="#3f3830" roughness={0.95} side={THREE.DoubleSide} />
+      {/* Ceiling / mouth frame */}
+      <mesh
+        position={[0, 5.35, 0]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        userData={{ fadeWithCenote: true }}
+      >
+        <ringGeometry args={[5.35, 12, 64]} />
+        <meshBasicMaterial color="#4a4238" side={THREE.DoubleSide} />
       </mesh>
-      {/* Jagged-feeling inner lip */}
-      <mesh position={[0, 5.85, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[5.55, 6.15, 48]} />
-        <meshStandardMaterial color="#5c5348" roughness={0.9} side={THREE.DoubleSide} />
+      <mesh
+        position={[0, 5.2, 0]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        userData={{ fadeWithCenote: true }}
+      >
+        <ringGeometry args={[5.0, 5.55, 48]} />
+        <meshBasicMaterial color="#7a7164" side={THREE.DoubleSide} />
       </mesh>
 
-      {/* Jungle rim around the mouth */}
-      <mesh position={[0, 6.35, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[7.4, 0.55, 10, 48]} />
-        <meshStandardMaterial color="#1a2e1c" roughness={0.95} />
+      {/* Jungle rim */}
+      <mesh
+        position={[0, 5.55, 0]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        userData={{ fadeWithCenote: true }}
+      >
+        <torusGeometry args={[6.6, 0.62, 10, 48]} />
+        <meshBasicMaterial color="#1f3520" />
       </mesh>
-      <mesh position={[0, 6.55, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[8.2, 0.35, 8, 40]} />
-        <meshStandardMaterial color="#243c22" roughness={0.95} />
+      <mesh
+        position={[0, 5.7, 0]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        userData={{ fadeWithCenote: true }}
+      >
+        <torusGeometry args={[7.5, 0.4, 8, 40]} />
+        <meshBasicMaterial color="#2a4528" />
       </mesh>
 
       {stalactites.map((s, i) => (
-        <mesh key={i} position={[s.x, s.y - s.h * 0.5, s.z]}>
+        <mesh
+          key={i}
+          position={[s.x, 5.15 - s.h * 0.5, s.z]}
+          userData={{ fadeWithCenote: true }}
+        >
           <coneGeometry args={[s.r, s.h, 7]} />
-          <meshStandardMaterial color="#6a6258" roughness={0.92} />
+          <meshBasicMaterial color="#8a8072" />
         </mesh>
       ))}
 
-      {/* Soft vines */}
-      {[0, 1, 2, 3, 4, 5].map((i) => {
-        const a = (i / 6) * Math.PI * 2 + 0.4;
-        const x = Math.cos(a) * 5.7;
-        const z = Math.sin(a) * 5.7;
+      {[0, 1, 2, 3, 4, 5, 6].map((i) => {
+        const a = (i / 7) * Math.PI * 2 + 0.35;
         return (
-          <mesh key={`v${i}`} position={[x, 3.2, z]} rotation={[0.15, 0, 0.08 * (i % 2 ? 1 : -1)]}>
-            <cylinderGeometry args={[0.025, 0.04, 5.2, 5]} />
-            <meshStandardMaterial color="#2d4a28" roughness={0.9} />
+          <mesh
+            key={`v${i}`}
+            position={[Math.cos(a) * 5.25, 2.6, Math.sin(a) * 5.25]}
+            rotation={[0.2, 0, (i % 2 ? 1 : -1) * 0.12]}
+            userData={{ fadeWithCenote: true }}
+          >
+            <cylinderGeometry args={[0.03, 0.045, 5.4, 5]} />
+            <meshBasicMaterial color="#355530" />
           </mesh>
         );
       })}
 
-      {/* Deep pool body */}
+      {/* Deep pool */}
       <mesh
         ref={waterDeep}
-        position={[0, -4.55, 0]}
+        position={[0, -3.95, 0]}
         rotation={[-Math.PI / 2, 0, 0]}
-        userData={{ isWater: true }}
       >
-        <circleGeometry args={[6.3, 72]} />
+        <circleGeometry args={[6.0, 72]} />
         <meshStandardMaterial
-          color="#064850"
-          emissive="#0a6a68"
-          emissiveIntensity={0.35}
-          roughness={0.55}
-          metalness={0.15}
+          color="#053840"
+          emissive="#0a5a58"
+          emissiveIntensity={0.45}
+          roughness={0.6}
+          metalness={0.1}
           transparent
           opacity={0}
+          depthWrite={false}
         />
       </mesh>
 
       {/* Surface — cenote turquoise */}
-      <mesh
-        ref={water}
-        position={[0, -4.15, 0]}
-        rotation={[-Math.PI / 2, 0, 0]}
-        userData={{ isWater: true }}
-      >
-        <circleGeometry args={[6.15, 72]} />
+      <mesh ref={water} position={[0, -3.55, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[5.85, 72]} />
         <meshStandardMaterial
-          color="#0ea8a4"
-          emissive="#14c8b8"
-          emissiveIntensity={0.3}
-          roughness={0.12}
-          metalness={0.45}
+          color="#0cb0a8"
+          emissive="#18d4c4"
+          emissiveIntensity={0.4}
+          roughness={0.1}
+          metalness={0.5}
           transparent
           opacity={0}
+          depthWrite={false}
         />
       </mesh>
 
@@ -267,42 +264,35 @@ export function CenoteScene() {
             ripples.current[i] = m;
           }}
           geometry={rippleGeo}
-          position={[
-            Math.cos(i * 1.7) * 0.6,
-            -4.12,
-            Math.sin(i * 1.7) * 0.5,
-          ]}
+          position={[Math.cos(i * 1.7) * 0.7, -3.52, Math.sin(i * 1.7) * 0.55]}
           rotation={[-Math.PI / 2, 0, 0]}
-          userData={{ isRipple: true }}
           visible={false}
         >
           <meshBasicMaterial
-            color="#9ef5e8"
+            color="#b8fff4"
             transparent
             opacity={0}
             depthWrite={false}
             side={THREE.DoubleSide}
             blending={THREE.AdditiveBlending}
+            fog={false}
           />
         </mesh>
       ))}
 
-      {/* Night sky through the mouth */}
-      <group position={[0, 7.2, 0]}>
-        <mesh
-          ref={mouthGlow}
-          rotation={[-Math.PI / 2, 0, 0]}
-          userData={{ isMouthSky: true }}
-        >
-          <circleGeometry args={[5.7, 48]} />
+      {/* Night sky disc through the mouth — fog disabled so stars stay bright */}
+      <group position={[0, 5.85, 0]}>
+        <mesh ref={mouthSky} rotation={[-Math.PI / 2, 0, 0]} renderOrder={-1}>
+          <circleGeometry args={[5.25, 48]} />
           <meshBasicMaterial
-            color="#0a1630"
+            color="#071428"
             transparent
             opacity={0}
             depthWrite={false}
+            fog={false}
           />
         </mesh>
-        <points ref={mouthStars} frustumCulled={false}>
+        <points ref={mouthStars} frustumCulled={false} renderOrder={2}>
           <bufferGeometry>
             <bufferAttribute
               attach="attributes-position"
@@ -314,16 +304,23 @@ export function CenoteScene() {
             />
           </bufferGeometry>
           <pointsMaterial
-            size={0.11}
+            size={0.16}
             vertexColors
             transparent
             opacity={0}
             depthWrite={false}
+            depthTest={false}
             blending={THREE.AdditiveBlending}
             sizeAttenuation
+            fog={false}
           />
         </points>
-        <points ref={milky} frustumCulled={false} rotation={[0.15, 0.4, 0.55]}>
+        <points
+          ref={milky}
+          frustumCulled={false}
+          renderOrder={3}
+          rotation={[0.2, 0.35, 0.55]}
+        >
           <bufferGeometry>
             <bufferAttribute
               attach="attributes-position"
@@ -335,28 +332,35 @@ export function CenoteScene() {
             />
           </bufferGeometry>
           <pointsMaterial
-            size={0.14}
+            size={0.2}
             vertexColors
             transparent
             opacity={0}
             depthWrite={false}
+            depthTest={false}
             blending={THREE.AdditiveBlending}
             sizeAttenuation
+            fog={false}
           />
         </points>
       </group>
 
       <pointLight
         ref={waterLight}
-        position={[0, -3.2, 0]}
-        color="#14c8b8"
+        position={[0, -2.6, 0]}
+        color="#18d4c4"
         intensity={0}
+        distance={22}
+        decay={2}
+      />
+      <pointLight
+        position={[0, 4.2, 0]}
+        color="#8aa6ff"
+        intensity={1.2}
         distance={20}
         decay={2}
       />
-      {/* Soft sky fill from the mouth */}
-      <pointLight position={[0, 5.5, 0]} color="#6a8cff" intensity={0.55} distance={18} decay={2} />
-      <hemisphereLight args={["#0c2038", "#0a6860", 0.45]} />
+      <ambientLight intensity={0.35} color="#1a3040" />
     </group>
   );
 }

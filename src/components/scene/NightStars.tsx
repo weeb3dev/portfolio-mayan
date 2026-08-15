@@ -37,12 +37,13 @@ export function NightStars() {
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
       <pointsMaterial
-        size={0.11}
+        size={0.12}
         color="#f4efe4"
         transparent
         opacity={0}
         depthWrite={false}
         sizeAttenuation
+        fog={false}
       />
     </points>
   );

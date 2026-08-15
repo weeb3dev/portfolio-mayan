@@ -22,9 +22,9 @@ function CameraRig() {
     );
     const plazaLook = new THREE.Vector3(0, 2.2 + Math.min(sceneT, 0.58) * 0.6, 0);
 
-    // Inside cenote: low near water, looking up through the starry mouth
-    const cenotePos = new THREE.Vector3(0.15, -2.35, 3.6);
-    const cenoteLook = new THREE.Vector3(0, 4.8, -0.4);
+    // Inside cenote: see turquoise pool below + starry mouth above
+    const cenotePos = new THREE.Vector3(0.2, -1.55, 4.8);
+    const cenoteLook = new THREE.Vector3(0, 2.4, 0);
 
     const target = plazaPos.lerp(cenotePos, cenote);
     const look = plazaLook.lerp(cenoteLook, cenote);
