@@ -39,7 +39,8 @@ export function MilkyWay() {
     const { cenote } = scenePhases(sceneT);
     const nightAmt = THREE.MathUtils.smoothstep(sceneT, 0.38, 0.55);
     const mat = points.current.material as THREE.PointsMaterial;
-    mat.opacity = nightAmt * 0.9 * (1 - cenote * 0.3) + cenote * 0.55;
+    // Hold / intensify into cenote so the mouth reads as packed night sky
+    mat.opacity = Math.max(nightAmt * 0.9, cenote * 0.95);
     points.current.rotation.z = sceneT * 0.35;
     points.current.position.x =
       -6 + sceneT * 14 + Math.sin(state.clock.elapsedTime * 0.05) * 0.4;

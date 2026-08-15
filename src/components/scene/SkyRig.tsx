@@ -75,7 +75,8 @@ export function SkyRig() {
     const dayBg = new THREE.Color("#74b4d6");
     const duskBg = new THREE.Color("#d4784a");
     const nightBg = new THREE.Color("#070b16");
-    const cenoteBg = new THREE.Color("#020a0e");
+    // Deep indigo night through the mouth — not pitch black
+    const cenoteBg = new THREE.Color("#050d1c");
     let bg: THREE.Color;
     if (cenote > 0.01) {
       bg = nightBg.clone().lerp(cenoteBg, cenote);
@@ -86,9 +87,14 @@ export function SkyRig() {
     }
 
     state.scene.background = bg;
+    // Lighter fog in cenote so stars through the mouth stay crisp
     state.scene.fog = new THREE.FogExp2(
       bg.getHex(),
-      THREE.MathUtils.lerp(0.016, cenote > 0.5 ? 0.028 : 0.01, Math.max(nightAmt, cenote)),
+      THREE.MathUtils.lerp(
+        0.016,
+        cenote > 0.5 ? 0.012 : 0.01,
+        Math.max(nightAmt, cenote),
+      ),
     );
   });
 
