@@ -5,9 +5,27 @@ export type Project = {
   stack: string[];
   context: string;
   href?: string;
+  featured?: boolean;
+  repoHref?: string;
+  metrics?: { value: string; label: string }[];
 };
 
 export const projects: Project[] = [
+  {
+    title: "ambassador.sh",
+    category: "Community Directory",
+    blurb:
+      "One directory for ambassador, fellows, and community programs from AI and LLM organizations. Lists 20 programs from 19 companies, from Anthropic and OpenAI to Cloudflare and Supabase, each with its own page of key facts, perks, and expectations. A Jobs page pulls live openings at those companies through a Cloudflare Worker running TinyFish Search, Fetch, and Agent. No login. Programs are submitted by email and curated into the listings.",
+    stack: ["JavaScript", "HTML", "CSS", "Cloudflare Workers", "TinyFish"],
+    context: "Live · Actively building",
+    href: "https://ambassador.sh",
+    featured: true,
+    repoHref: "https://github.com/weeb3dev/ambassador.sh",
+    metrics: [
+      { value: "461", label: "Unique visitors in 24h · Oct 2026" },
+      { value: "2.85k", label: "Unique visitors in 30 days · Oct 2026" },
+    ],
+  },
   {
     title: "Talaria",
     category: "Agentic System",
