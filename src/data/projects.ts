@@ -20,7 +20,6 @@ export const projects: Project[] = [
     context: "Live · Actively building",
     href: "https://ambassador.sh",
     featured: true,
-    repoHref: "https://github.com/weeb3dev/ambassador.sh",
     metrics: [
       { value: "461", label: "Unique visitors in 24h · Oct 2026" },
       { value: "2.85k", label: "Unique visitors in 30 days · Oct 2026" },

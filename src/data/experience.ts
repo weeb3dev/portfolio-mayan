@@ -11,7 +11,7 @@ export const experience: ExperienceItem[] = [
     title: "AI Training Expert",
     org: "micro1 · Contract",
     bullets: [
-      "Cleared micro1's selective vetting and onboarding, which only a small percentage of applicants complete.",
+      "Cleared micro1's selective vetting and onboarding, which only a small percentage of applicants make it through.",
       "Evaluate, annotate, and refine model outputs across multiple domains to shape how next-generation models learn, reason, and perform.",
       "Deliver detailed written feedback within project guidelines and QA processes on AI training and validation projects.",
     ],
@@ -22,7 +22,7 @@ export const experience: ExperienceItem[] = [
     org: "SpaceXSI (previously SpaceXAI) · Tampa Bay",
     bullets: [
       "Hosted the inaugural Tampa Bay Cursor meetup: 80 RSVPs, 45 in-person attendees, 6 lightning demos, and a live Q&A with Frances Thai (SWE at Cursor).",
-      "Now running Grok Bot events too, starting with the Grok Bot Tampa meetup.",
+      "Now running Grok Bot events too, starting with the Grok Bot Tampa Bay meetup.",
       "Building a local community of developers, founders, and engineering leaders through recurring meetups, workshops, and hackathons.",
       "Routing field-level feedback to the Cursor and Grok teams. Logistics and marketing coordinated with Linear MCP and Claude Cowork.",
     ],
