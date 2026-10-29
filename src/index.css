@@ -453,7 +453,8 @@ button {
     background 0.25s var(--ease-out);
 }
 
-a.project-card:hover {
+a.project-card:hover,
+a.edu-item--link:hover {
   border-color: rgba(196, 92, 58, 0.75);
   transform: translateY(-2px);
   background: rgba(28, 20, 16, 0.72);
@@ -525,6 +526,112 @@ a.project-card:hover {
   color: var(--limestone-deep);
   margin-top: auto;
   padding-top: 0.35rem;
+}
+
+.project-featured {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 1.5rem 2.25rem;
+  margin-top: 2rem;
+  padding: 1.6rem 1.6rem 1.7rem;
+  border: 1.5px solid rgba(196, 92, 58, 0.6);
+  border-radius: 0.85rem;
+  background: radial-gradient(
+      120% 140% at 100% 0%,
+      rgba(196, 92, 58, 0.16),
+      transparent 55%
+    ),
+    var(--panel);
+}
+
+.project-featured + .project-grid {
+  margin-top: 1rem;
+}
+
+.project-featured-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.project-featured-kicker {
+  font-family: var(--font-glyph);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--limestone);
+  padding: 0.22rem 0.6rem;
+  border: 1px solid rgba(196, 92, 58, 0.55);
+  border-radius: 999px;
+  background: rgba(196, 92, 58, 0.14);
+}
+
+.project-featured-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2rem, 4.5vw, 2.8rem);
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin-top: 0.2rem;
+}
+
+.project-featured .project-featured-blurb {
+  max-width: 62ch;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.project-featured-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding-left: 2.25rem;
+  border-left: 1px solid rgba(196, 92, 58, 0.22);
+}
+
+.project-featured-metrics {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.project-featured-metrics li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.project-featured-metric-value {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--ember);
+}
+
+.project-featured-metric-label {
+  font-family: var(--font-glyph);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1.45;
+  text-transform: uppercase;
+  text-wrap: balance;
+  color: var(--text-muted);
+}
+
+.project-featured-aside .project-card-context {
+  padding-top: 0;
+}
+
+.project-featured-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
 }
 
 .exp-list {
@@ -634,6 +741,27 @@ a.project-card:hover {
   padding: 0.9rem 1rem;
 }
 
+.edu-item--link {
+  display: block;
+  color: inherit;
+  transition: border-color 0.25s var(--ease-out), transform 0.25s var(--ease-out),
+    background 0.25s var(--ease-out);
+}
+
+.edu-item-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.edu-link-arrow {
+  flex-shrink: 0;
+  font-size: 0.95rem;
+  color: var(--limestone);
+  opacity: 0.7;
+}
+
 .edu-title {
   font-family: var(--font-display);
   font-weight: 700;
@@ -686,7 +814,7 @@ a.project-card:hover {
 
 .media-luma-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
   gap: 1rem;
 }
 
@@ -737,6 +865,18 @@ a.project-card:hover {
 
   .project-grid {
     grid-template-columns: 1fr;
+  }
+
+  .project-featured {
+    grid-template-columns: 1fr;
+    padding: 1.3rem 1.25rem 1.4rem;
+  }
+
+  .project-featured-aside {
+    padding-left: 0;
+    padding-top: 1.25rem;
+    border-left: 0;
+    border-top: 1px solid rgba(196, 92, 58, 0.22);
   }
 
   .exp-item {

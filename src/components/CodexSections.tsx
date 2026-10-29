@@ -1,12 +1,16 @@
 import { SectionKicker } from "./glyphs/SectionKicker";
 import { SteppedDivider } from "./glyphs/SteppedDivider";
 import { ProjectCard } from "./ProjectCard";
+import { FeaturedProject } from "./FeaturedProject";
 import { ExperienceList } from "./ExperienceList";
 import { EducationList } from "./EducationList";
 import { MediaEmbeds } from "./MediaEmbeds";
 import { projects } from "../data/projects";
 import { experience } from "../data/experience";
 import { education } from "../data/education";
+
+const featuredProjects = projects.filter((p) => p.featured);
+const gridProjects = projects.filter((p) => !p.featured);
 
 export function CodexSections() {
   return (
@@ -36,11 +40,14 @@ export function CodexSections() {
           <SectionKicker index={2} label="Uinal — Work" />
           <h2>Selected projects</h2>
           <p>
-            Coding agents, RAG over COBOL, realtime collab, games. Shipped and
-            demoed.
+            A live directory of AI ambassador programs, plus coding agents, RAG
+            over COBOL, realtime collab, and games. Shipped and demoed.
           </p>
+          {featuredProjects.map((p) => (
+            <FeaturedProject key={p.title} project={p} />
+          ))}
           <div className="project-grid">
-            {projects.map((p, i) => (
+            {gridProjects.map((p, i) => (
               <ProjectCard key={p.title} project={p} index={i} />
             ))}
           </div>
@@ -69,7 +76,7 @@ export function CodexSections() {
           <SectionKicker index={5} label="Baktun — Media" />
           <h2>Building in public</h2>
           <p>
-            DevRel content and Cursor community events in the Tampa Bay area.
+            DevRel content plus Cursor and Grok community events in Tampa Bay.
           </p>
           <MediaEmbeds />
         </section>

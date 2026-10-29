@@ -3,6 +3,10 @@ const youtubeSrc =
 
 const lumas = [
   {
+    title: "Grok Bot Meetup · Tampa",
+    src: "https://luma.com/embed/event/evt-YJgIaDbgTcU3aKj/simple",
+  },
+  {
     title: "Cursor Meetup #1 · Tampa Bay",
     src: "https://luma.com/embed/event/evt-N8Kffq9UJ4uVb5j/simple",
   },
