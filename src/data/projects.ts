@@ -26,6 +26,24 @@ export const projects: Project[] = [
     ],
   },
   {
+    title: "Purrsuit",
+    category: "Touchscreen Game",
+    blurb:
+      "Touch-first iPhone/iPad game where cats chase twelve Three.js playmates — mouse through zombie, including Spooky ghost and zombie habitats. Paw taps earn points; profiles, personal bests, guest play, and hold-to-pause.",
+    stack: ["TypeScript", "Three.js"],
+    context: "Weekend ship · GPT-6 Astra",
+    href: "https://purrsuit-cat-play.weeb3dev.chatgpt.site",
+  },
+  {
+    title: "AGMCP",
+    category: "WebMCP App",
+    blurb:
+      "2023 USDA Plant Hardiness Zones for every US ZIP as a human site plus 18 WebMCP tools and a JSON API. Look up zones, filter 50+ plants, and build a garden plan with an agent on the same page.",
+    stack: ["TypeScript", "Vite", "Cloudflare Workers", "WebMCP"],
+    context: "WebMCP Challenge",
+    href: "https://agmcp.shogun-0a9.workers.dev/",
+  },
+  {
     title: "Talaria",
     category: "Agentic System",
     blurb:
